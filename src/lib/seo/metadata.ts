@@ -62,6 +62,9 @@ export function siteMetadataBase(): Metadata {
       alternateLocale: LANGS.filter((l) => l !== "en").map((l) => OG_LOCALE[l]),
     },
     robots: { index: true, follow: true },
+    verification: {
+      google: "NdLL2m61xfnzABPwz5qAmkk0vhEL4f_5eVvJjZynJ5U",
+    },
   };
 }
 
