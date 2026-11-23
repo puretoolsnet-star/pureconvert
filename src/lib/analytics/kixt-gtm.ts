@@ -2,7 +2,7 @@ import { CURRENT_ECOSYSTEM_PROJECT_ID, KIXT_HUB_ORIGIN } from "@/lib/ecosystem";
 import type { Lang } from "@/i18n/locales";
 import type { SubcategoryId } from "@/lib/tools/routes";
 
-export const KIXT_GTM_ID = "GTM-K2VWRNJ7";
+export const KIXT_GTM_ID = "GTM-NLRHWF83";
 
 export const KIXT_ECOSYSTEM_CONTEXT = {
   ecosystem: "kixt.net",
