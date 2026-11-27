@@ -11,13 +11,16 @@ import type { CategoryId, ToolRouteId } from "@/lib/tools/routes";
 import { SUBCATEGORIES_BY_CATEGORY, toolPath } from "@/lib/tools/routes";
 import { getCategoryIcon, getSubcategoryIcon } from "@/lib/tools/icons";
 import { useLocalizedPath } from "@/lib/i18n/use-localized-path";
+import { PageSeoSection } from "@/components/seo/PageSeoSection";
 import { cn } from "@/lib/cn";
+import { usePageSeoContent } from "@/lib/i18n/use-page-seo-content";
 
 export function CategoryHub({ categoryId }: { categoryId: CategoryId }) {
   const { lang, t } = useI18n();
   const href = useLocalizedPath();
   const copy = getCategoryCopy(lang, categoryId);
   const CategoryIcon = getCategoryIcon(categoryId);
+  const seoContent = usePageSeoContent(categoryId);
 
   return (
     <div className="pureconvert-page-shell flex min-h-dvh flex-col">
@@ -60,6 +63,7 @@ export function CategoryHub({ categoryId }: { categoryId: CategoryId }) {
             );
           })}
         </ul>
+        <PageSeoSection content={seoContent} />
       </main>
       <SiteFooter />
     </div>

@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 
 import { dictionaries, LANGS, type Lang } from "@/i18n/locales";
-import { TOOL_MODE_SEO } from "@/lib/seo/tool-modes";
+import { getSeoCopy, type SeoPageId } from "@/i18n/seo/copy";
+import { seoPathAfterLang } from "@/lib/seo/paths";
 import { OG_LOCALE, absoluteUrl, canonicalForLang, hreflangAlternates } from "@/lib/seo/site-url";
 import type { CategoryId, ToolRouteId } from "@/lib/tools/routes";
 
@@ -15,13 +16,16 @@ export function trimMetaDescription(text: string): string {
   return `${one.slice(0, META_DESC_MAX - 1).trimEnd()}…`;
 }
 
-function withSeoBundle(lang: Lang, title: string, description: string, pathAfterLang: string): Metadata {
-  const desc = trimMetaDescription(description);
+function withSeoBundle(lang: Lang, page: SeoPageId): Metadata {
+  const copy = getSeoCopy(page, lang);
+  const pathAfterLang = seoPathAfterLang(page);
+  const desc = trimMetaDescription(copy.description);
   const canonical = canonicalForLang(lang, pathAfterLang);
   const brand = dictionaries[lang].brand.name;
   return {
-    title,
+    title: { absolute: copy.title },
     description: desc,
+    keywords: copy.keywords,
     alternates: {
       canonical,
       languages: hreflangAlternates(pathAfterLang),
@@ -29,7 +33,7 @@ function withSeoBundle(lang: Lang, title: string, description: string, pathAfter
     openGraph: {
       type: "website",
       siteName: brand,
-      title,
+      title: copy.title,
       description: desc,
       url: canonical,
       locale: OG_LOCALE[lang],
@@ -37,7 +41,7 @@ function withSeoBundle(lang: Lang, title: string, description: string, pathAfter
     },
     twitter: {
       card: "summary",
-      title,
+      title: copy.title,
       description: desc,
     },
     robots: {
@@ -52,8 +56,8 @@ export function siteMetadataBase(): Metadata {
   const en = dictionaries.en;
   return {
     metadataBase: new URL(absoluteUrl("")),
-    title: { default: `${en.brand.name} — ${en.home.heroTitle}`, template: `%s | ${en.brand.name}` },
-    description: trimMetaDescription(`${en.home.heroIntro} ${en.brand.tagline}`),
+    title: { default: getSeoCopy("home", "en").title, template: `%s | ${en.brand.name}` },
+    description: trimMetaDescription(getSeoCopy("home", "en").description),
     applicationName: en.brand.name,
     openGraph: {
       type: "website",
@@ -69,28 +73,13 @@ export function siteMetadataBase(): Metadata {
 }
 
 export function buildPageMetadata(lang: Lang): Metadata {
-  const t = dictionaries[lang];
-  const pathAfterLang = "";
-  const title = t.home.heroTitle;
-  const description = `${t.home.heroIntro} ${t.brand.tagline}`;
-  return withSeoBundle(lang, title, description, pathAfterLang);
+  return withSeoBundle(lang, "home");
 }
 
 export function buildCategoryMetadata(categoryId: CategoryId, lang: Lang): Metadata {
-  const t = dictionaries[lang];
-  const cat = t.categories[categoryId];
-  const pathAfterLang = `/${categoryId}`;
-  const description = `${cat.pageIntro} ${t.brand.tagline}`;
-  return withSeoBundle(lang, cat.hubTitle, description, pathAfterLang);
+  return withSeoBundle(lang, categoryId);
 }
 
 export function buildToolMetadata(routeId: ToolRouteId, lang: Lang): Metadata {
-  const t = dictionaries[lang];
-  const sub = t.subcategories[routeId];
-  if (!sub) return {};
-  const [category, subSlug] = routeId.split("/");
-  const pathAfterLang = `/${category}/${subSlug}`;
-  const modes = TOOL_MODE_SEO[lang][routeId];
-  const description = [sub.description, sub.hint, modes].filter(Boolean).join(" ");
-  return withSeoBundle(lang, sub.title, description, pathAfterLang);
+  return withSeoBundle(lang, routeId);
 }

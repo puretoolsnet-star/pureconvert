@@ -3,10 +3,9 @@ import { notFound } from "next/navigation";
 
 import { ConverterShell } from "@/components/convert/ConverterShell";
 import { SeoJsonLd } from "@/components/seo/SeoJsonLd";
-import { dictionaries, isLang, LANGS } from "@/i18n/locales";
-import { webPageJsonLd } from "@/lib/seo/json-ld";
-import { buildToolMetadata, trimMetaDescription } from "@/lib/seo/metadata";
-import { TOOL_MODE_SEO } from "@/lib/seo/tool-modes";
+import { isLang, LANGS } from "@/i18n/locales";
+import { buildToolMetadata } from "@/lib/seo/metadata";
+import { buildPageStructuredData } from "@/lib/seo/structured-data";
 import { CATEGORIES, routeFromSegments, type ToolRouteId } from "@/lib/tools/routes";
 
 type PageProps = { params: Promise<{ lang: string; category: string; subcategory: string }> };
@@ -41,14 +40,9 @@ export default async function SubcategoryPage({ params }: PageProps) {
   if (!isLang(raw) || !routeId) notFound();
   const lang = raw;
   const categoryId = category as (typeof CATEGORIES)[number];
-  const sub = dictionaries[lang].subcategories[routeId];
-  const modes = TOOL_MODE_SEO[lang][routeId as ToolRouteId];
-  const description = trimMetaDescription([sub.description, sub.hint, modes].filter(Boolean).join(" "));
   return (
     <>
-      <SeoJsonLd
-        data={webPageJsonLd(lang, `/${categoryId}/${subcategory}`, sub.title, description)}
-      />
+      <SeoJsonLd data={buildPageStructuredData(routeId as ToolRouteId, lang)} />
       <ConverterShell routeId={routeId as ToolRouteId} categoryId={categoryId} />
     </>
   );

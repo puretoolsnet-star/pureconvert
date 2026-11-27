@@ -6,6 +6,8 @@ import type { ReactNode } from "react";
 
 import { ConverterPanel } from "@/components/convert/ConverterPanel";
 import { SubcategoryTabs } from "@/components/convert/SubcategoryTabs";
+import { PageSeoSection } from "@/components/seo/PageSeoSection";
+import { RelatedConverters } from "@/components/seo/RelatedConverters";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { useI18n } from "@/i18n/context";
@@ -14,6 +16,7 @@ import type { CategoryId, ToolRouteId } from "@/lib/tools/routes";
 import { getCategoryIcon, getSubcategoryIcon } from "@/lib/tools/icons";
 import { categoryPath } from "@/lib/tools/routes";
 import { useLocalizedPath } from "@/lib/i18n/use-localized-path";
+import { usePageSeoContent } from "@/lib/i18n/use-page-seo-content";
 
 export function ConverterShell({
   routeId,
@@ -30,6 +33,7 @@ export function ConverterShell({
   const category = getCategoryCopy(lang, categoryId);
   const CategoryIcon = getCategoryIcon(categoryId);
   const Icon = getSubcategoryIcon(routeId);
+  const seoContent = usePageSeoContent(routeId);
 
   return (
     <div className="pureconvert-page-shell flex min-h-dvh flex-col">
@@ -66,6 +70,8 @@ export function ConverterShell({
             aria-hidden
           />
         </div>
+        <RelatedConverters categoryId={categoryId} activeRouteId={routeId} />
+        <PageSeoSection content={seoContent} />
       </div>
       <SiteFooter />
     </div>

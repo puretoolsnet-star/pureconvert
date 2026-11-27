@@ -10,11 +10,14 @@ import { getCategoryCopy } from "@/i18n/tools/get-copy";
 import { CATEGORIES, categoryPath, type CategoryId } from "@/lib/tools/routes";
 import { getCategoryIcon } from "@/lib/tools/icons";
 import { useLocalizedPath } from "@/lib/i18n/use-localized-path";
+import { PageSeoSection } from "@/components/seo/PageSeoSection";
 import { cn } from "@/lib/cn";
+import { usePageSeoContent } from "@/lib/i18n/use-page-seo-content";
 
 export function HomePage() {
   const { lang, t } = useI18n();
   const href = useLocalizedPath();
+  const seoContent = usePageSeoContent("home");
 
   return (
     <div className="pureconvert-page-shell flex min-h-dvh flex-col">
@@ -71,6 +74,7 @@ export function HomePage() {
           data-adsense-unit=""
           aria-hidden
         />
+        <PageSeoSection content={seoContent} />
       </main>
       <SiteFooter />
     </div>

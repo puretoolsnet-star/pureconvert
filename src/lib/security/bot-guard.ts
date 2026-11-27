@@ -6,7 +6,8 @@ export function isAlwaysAllowedPath(pathname: string): boolean {
     pathname.startsWith("/_next") ||
     pathname === "/favicon.ico" ||
     pathname === "/robots.txt" ||
-    pathname === "/sitemap.xml"
+    pathname === "/sitemap.xml" ||
+    pathname === "/ads.txt"
   );
 }
 

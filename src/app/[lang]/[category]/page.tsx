@@ -3,9 +3,9 @@ import { notFound } from "next/navigation";
 
 import { CategoryHub } from "@/components/hub/CategoryHub";
 import { SeoJsonLd } from "@/components/seo/SeoJsonLd";
-import { dictionaries, isLang, LANGS } from "@/i18n/locales";
-import { webPageJsonLd } from "@/lib/seo/json-ld";
-import { buildCategoryMetadata, trimMetaDescription } from "@/lib/seo/metadata";
+import { isLang, LANGS } from "@/i18n/locales";
+import { buildCategoryMetadata } from "@/lib/seo/metadata";
+import { buildPageStructuredData } from "@/lib/seo/structured-data";
 import { CATEGORIES, type CategoryId } from "@/lib/tools/routes";
 
 type PageProps = { params: Promise<{ lang: string; category: string }> };
@@ -26,13 +26,9 @@ export default async function CategoryPage({ params }: PageProps) {
   if (!isLang(raw) || !(CATEGORIES as readonly string[]).includes(category)) notFound();
   const lang = raw;
   const categoryId = category as CategoryId;
-  const cat = dictionaries[lang].categories[categoryId];
-  const description = trimMetaDescription(`${cat.pageIntro} ${dictionaries[lang].brand.tagline}`);
   return (
     <>
-      <SeoJsonLd
-        data={webPageJsonLd(lang, `/${categoryId}`, cat.hubTitle, description)}
-      />
+      <SeoJsonLd data={buildPageStructuredData(categoryId, lang)} />
       <CategoryHub categoryId={categoryId} />
     </>
   );
